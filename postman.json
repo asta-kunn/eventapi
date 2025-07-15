@@ -1,0 +1,229 @@
+{
+    "info": {
+      "_postman_id": "b1e2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "EventAPI",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8080"
+      },
+      {
+        "key": "token",
+        "value": ""
+      },
+      {
+        "key": "eventId",
+        "value": ""
+      }
+    ],
+    "item": [
+      {
+        "name": "Auth: Register",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/api/auth/register",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "auth",
+              "register"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Auth: Login",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var json = pm.response.json();",
+                "pm.environment.set(\"token\", json.token);"
+              ]
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/api/auth/login",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "auth",
+              "login"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Event: Create",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var json = pm.response.json();",
+                "pm.environment.set(\"eventId\", json.id);"
+              ]
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"title\": \"My Event\",\n  \"description\": \"Event Description\",\n  \"date\": \"2025-08-01T10:00:00\"\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/api/events",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "events"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Event: List All",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/api/events",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "events"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Event: Get by ID",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/api/events/{{eventId}}",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "events",
+              "{{eventId}}"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Event: Register for Event",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/api/events/{{eventId}}/register",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "events",
+              "{{eventId}}",
+              "register"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Event: Stats",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/api/events/stats",
+            "host": [
+              "{{base_url}}"
+            ],
+            "path": [
+              "api",
+              "events",
+              "stats"
+            ]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  

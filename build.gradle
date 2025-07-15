@@ -1,0 +1,58 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Boot Starters - with explicit versions
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:3.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.5.3'
+	
+	// Database
+	runtimeOnly 'org.postgresql:postgresql:42.7.3'
+	runtimeOnly 'com.h2database:h2:2.3.232'
+	
+	// JWT - Hardcoded versions
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	
+	// Lombok - Hardcoded version
+	implementation 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	
+	// MapStruct - Hardcoded version
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	
+	// Required for Lombok and MapStruct to work together
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	
+	// Test Dependencies - with explicit versions
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.5.3'
+	testImplementation 'org.springframework.security:spring-security-test:6.4.1'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// H2 Database for testing - hardcoded version
+	testRuntimeOnly 'com.h2database:h2:2.3.232'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
