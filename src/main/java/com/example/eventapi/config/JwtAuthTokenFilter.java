@@ -1,19 +1,25 @@
 package com.example.eventapi.config;
 
-import com.example.eventapi.security.JwtProvider;
-import com.example.eventapi.service.AuthService;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import java.io.IOException;
+
+import com.example.eventapi.security.JwtProvider;
+import com.example.eventapi.service.AuthService;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
     @Autowired private JwtProvider jwtProvider;
-    @Autowired private AuthService authService;
+    @Autowired @Lazy private AuthService authService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req,

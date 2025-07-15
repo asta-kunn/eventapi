@@ -1,24 +1,31 @@
 package com.example.eventapi.service;
 
-import com.example.eventapi.dto.*;
-import com.example.eventapi.entity.User;
-import com.example.eventapi.entity.Role;
-import com.example.eventapi.repository.UserRepository;
-import com.example.eventapi.security.JwtProvider;
-import com.example.eventapi.exception.ResourceNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.authentication.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.example.eventapi.dto.JwtResponse;
+import com.example.eventapi.dto.LoginRequest;
+import com.example.eventapi.dto.RegisterRequest;
+import com.example.eventapi.entity.Role;
+import com.example.eventapi.entity.User;
+import com.example.eventapi.exception.ResourceNotFoundException;
+import com.example.eventapi.repository.UserRepository;
+import com.example.eventapi.security.JwtProvider;
 
 @Service
 public class AuthService implements UserDetailsService {
 
     @Autowired private UserRepository userRepo;
-    @Autowired private AuthenticationManager authManager;
+    @Autowired @Lazy private AuthenticationManager authManager;
     @Autowired private PasswordEncoder encoder;
     @Autowired private JwtProvider jwtProvider;
 
