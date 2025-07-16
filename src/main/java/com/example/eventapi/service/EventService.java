@@ -1,15 +1,23 @@
 package com.example.eventapi.service;
 
-import com.example.eventapi.dto.*;
-import com.example.eventapi.entity.*;
-import com.example.eventapi.mapper.EventMapper;
-import com.example.eventapi.repository.*;
-import com.example.eventapi.exception.ResourceNotFoundException;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
-import java.util.stream.*;
+
+import com.example.eventapi.dto.EventRequest;
+import com.example.eventapi.dto.EventResponse;
+import com.example.eventapi.entity.Event;
+import com.example.eventapi.entity.EventRegistration;
+import com.example.eventapi.entity.User;
+import com.example.eventapi.exception.ResourceNotFoundException;
+import com.example.eventapi.mapper.EventMapper;
+import com.example.eventapi.repository.EventRegistrationRepository;
+import com.example.eventapi.repository.EventRepository;
+import com.example.eventapi.repository.UserRepository;
 
 @Service
 public class EventService {
@@ -30,6 +38,18 @@ public class EventService {
 
     @Transactional
     public EventResponse createEvent(EventRequest req, Authentication auth) {
+        // Debug logging
+        System.out.println("DEBUG: User trying to create event: " + auth.getName());
+        System.out.println("DEBUG: User authorities: " + auth.getAuthorities());
+        
+        // Check if user has ADMIN role
+        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            System.out.println("DEBUG: User does not have ROLE_ADMIN authority, rejecting");
+            throw new IllegalArgumentException("Only ADMIN users can create events");
+        }
+        
+        System.out.println("DEBUG: User has ADMIN authority, proceeding with event creation");
+        
         User creator = userRepo.findByEmail(auth.getName())
             .orElseThrow(() -> new ResourceNotFoundException("User","email",auth.getName()));
         Event e = mapper.toEntity(req);

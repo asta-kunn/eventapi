@@ -45,19 +45,41 @@ public class AuthService implements UserDetailsService {
     public JwtResponse register(RegisterRequest req) {
         if (userRepo.existsByEmail(req.getEmail()))
             throw new IllegalArgumentException("Email already in use");
+        
+        // Debug logging
+        System.out.println("DEBUG: Received role from request: '" + req.getRole() + "'");
+        System.out.println("DEBUG: Role is null: " + (req.getRole() == null));
+        System.out.println("DEBUG: Role is empty: " + (req.getRole() != null && req.getRole().trim().isEmpty()));
+        
+        // Determine role from request - improved logic
+        Role userRole;
+        if (req.getRole() != null && "ADMIN".equalsIgnoreCase(req.getRole().trim())) {
+            userRole = Role.ROLE_ADMIN;
+            System.out.println("DEBUG: Setting role to ROLE_ADMIN");
+        } else {
+            userRole = Role.ROLE_USER;
+            System.out.println("DEBUG: Setting role to ROLE_USER (default or non-ADMIN)");
+        }
+        
         User u = User.builder()
                      .name(req.getName())
                      .email(req.getEmail())
                      .password(encoder.encode(req.getPassword()))
-                     .role(Role.ROLE_USER)
+                     .role(userRole)
                      .build();
-        userRepo.save(u);
+        
+        System.out.println("DEBUG: About to save user with role: " + userRole.name());
+        User savedUser = userRepo.save(u);
+        System.out.println("DEBUG: Saved user with role: " + savedUser.getRole().name());
 
         Authentication auth = authManager.authenticate(
             new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
         String token = jwtProvider.generateToken(auth);
 
-        return new JwtResponse(token, "Bearer", u.getId(), u.getName(), u.getEmail(), u.getRole().name());
+        JwtResponse response = new JwtResponse(token, "Bearer", savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getRole().name());
+        System.out.println("DEBUG: Returning response with role: " + response.getRole());
+        
+        return response;
     }
 
     public JwtResponse login(LoginRequest req) {
